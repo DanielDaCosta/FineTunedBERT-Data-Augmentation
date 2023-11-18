@@ -1,8 +1,18 @@
-# Homework 3
+# Optimizing Language Models through Enhanced Fine-Tuning with Data Augmentation Techniques
 
-**Name:** Daniel Pereira da Costa
+Paper: [Optimizing Language Models through Enhanced Fine-Tuning with Data Augmentation Techniques.pdf](https://github.com/DanielDaCosta/FineTunedBERT-Data-Augmentation/blob/main/Optimizing%20Language%20Models%20through%20Enhanced%20Fine-Tuning%20with%20Data%20Augmentation%20Techniques.pdf)
 
-**USC ID:** 3777473693
+# Abstract
+Text classification, one of the core tasks of Natural Language Processing (NLP), encounters challenges when evaluating models in out-of-distribution (OOD) contexts. Addressing these challenges requires the application of specialized techniques to enhance model performance. This paper analyzes the efficacy of a fine-tuned iteration of BERT on a custom OOD dataset, utilizing data augmentation techniques to bolster its performance and showcasing the efficacy of this technique. Through a comparative analysis with DistilBERT and GPT-3.5, the paper demonstrates that comparable results can be achieved with a 40\% smaller model, emphasizing the potential for efficiency gains without sacrificing performance.
+
+# Introduction
+Fine-tuning a model a pre-trained model on a downstream task is a common procedure in the NLP space, as it facilitates achieving higher performance with minimal effort. However, one important aspect to consider is that, in real-world scenarios, test data often deviates from the training data distribution. As a result, ensuring that the model exhibits robust performance on datasets with both similar and divergent distributions is crucial.
+
+In this paper, we go over fine-tuning a BERT model on binary classification tasks, testing its performance on a specifically crafted out-of-distribution dataset and discussing the reasons behind the observed decline in the model's effectiveness under these circumstances. Furthermore, the paper encompasses the application of a data augmentation technique involving expanding the training set with out-of-distribution data, followed by a subsequent round of fine-tuning.
+
+We further extend our investigation by applying the previously outlined procedure to DistilBERT, a model that is 40% smaller, highlighting the trade-off between efficiency and performance.  To validate the model accuracy, we use GPT-3.5 as a baseline in a zero-shot setting on a small subset of the dataset to verify the model's performance.
+
+The results showcase an enhancement in performance on the out-of-distribution (OOD) dataset after the integration of data augmentation. However, this improvement is accompanied by a comparatively modest decrease in performance on the original dataset.  Moreover, the study emphasizes that employing DestilBERT, a smaller model that can be trained 50% faster, enables the preservation of the model's performance in a similar setting.
 
 # Getting Started
 
