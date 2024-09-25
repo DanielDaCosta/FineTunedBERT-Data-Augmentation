@@ -16,6 +16,11 @@ The results showcase an enhancement in performance on the out-of-distribution (O
 
 # Getting Started
 
+## Dataset
+IMDB Dataset: Large Movie Review Dataset. This is a dataset for binary sentiment classification containing substantially more data than previous benchmark datasets. We provide a set of 25,000 highly polar movie reviews for training, and 25,000 for testing. There is additional unlabeled data for use as well.
+
+https://huggingface.co/datasets/stanfordnlp/imdb
+
 ## Installation
 Python 3.11.5:
 - torch==2.1.0
