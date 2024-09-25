@@ -25,13 +25,6 @@ nltk.download('wordnet')
 
 random.seed(0)
 
-
-def example_transform(example):
-    
-    example["text"] = example["text"].lower()
-    return example
-
-
 ##################
 # Sythetic Typos #
 ##################
@@ -135,7 +128,6 @@ def add_typos(text: str, pct_typos: float = 0.4, typos_list=['swap', 'remove', '
 
     # Put sentence together again:
     text = TreebankWordDetokenizer().detokenize(word_list)
-    
     
     return text
 

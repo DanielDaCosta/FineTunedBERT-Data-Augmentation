@@ -12,6 +12,7 @@ import random
 import argparse
 from utils import *
 import os
+from datasets import concatenate_datasets
 
 
 ##################
@@ -25,11 +26,6 @@ import os
 # out_distilbert_augmented_transformed.txt Score:  {'accuracy': 0.88216}
 
 # out_distilbert_augmented_original.txt Score: Score:  {'accuracy': 0.9178}
-
-###############
-# New Imports #
-###############
-from datasets import concatenate_datasets
 
 # Set seed
 random.seed(0)
