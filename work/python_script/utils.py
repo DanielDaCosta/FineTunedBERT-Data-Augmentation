@@ -135,7 +135,15 @@ def add_typos(text: str, pct_typos: float = 0.4, typos_list=['swap', 'remove', '
 ############
 # Synonyms #
 ############
-def get_wordnet_pos(treebank_tag): # Convert POS-Tag from treebank_tag to Wordnet tags
+def get_wordnet_pos(treebank_tag: str) -> str:
+    """
+    Convert POS-Tag from treebank_tag to WordNet tags.
+
+    :param treebank_tag: POS tag in treebank format.
+    :type treebank_tag: str
+    :return: Corresponding WordNet POS tag.
+    :rtype: str
+    """
     if treebank_tag.startswith('J'):
         return wn.ADJ
     elif treebank_tag.startswith('V'):
@@ -206,7 +214,16 @@ def replace_with_synonym(text: str, pct_synonyms: float = 0.4) -> str:
 ########################
 # Expand Constractions #
 ########################
-def expand_contradictions(text):
+def expand_contradictions(text: str) -> str:
+    """
+    Expands common English contractions found in the input text.
+    This function takes a string containing English contractions and replaces them
+    with their expanded forms. For example, "can't" becomes "cannot" and "I'm" becomes "I am".
+    Args:
+        text (str): The input string containing contractions.
+    Returns:
+        str: The input string with contractions expanded.
+    """
 
     contraction_mapping = {
         "won't": "will not",
@@ -322,10 +339,24 @@ def replace_with_synonym_word2vec(text: str, pct_synonyms: float = 0.4, word2vec
     text = TreebankWordDetokenizer().detokenize(word_list)
     return text
 
-def custom_transform(example):
-    
-    # You should update example["text"] using your transformation
-    
+def custom_transform(example: dict) -> dict:
+    """
+    Apply a random transformation to the text in the example.
+
+    The function randomly selects one of the following transformations:
+    - Typo generation
+    - Synonym replacement using WordNet
+    - Random word swap
+    - Random word deletion
+    - Synonym replacement using Word2Vec
+
+    After applying the selected transformation, it expands contractions in the text.
+
+    :param example: A dictionary containing the text to be transformed.
+    :type example: dict
+    :return: The transformed example with updated text.
+    :rtype: dict
+    """
     # Select transformation
     selected_transformation = random.choice(["typo", "synonym", "swap", "deletion", "synonym_word2vec"])
 
@@ -346,6 +377,3 @@ def custom_transform(example):
     example["text"] = text
     
     return example
-
-
-

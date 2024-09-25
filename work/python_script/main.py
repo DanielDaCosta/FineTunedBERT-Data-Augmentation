@@ -1,3 +1,4 @@
+from typing import TextIO
 import datasets
 from datasets import load_dataset
 from transformers import AutoTokenizer
@@ -34,16 +35,33 @@ torch.cuda.manual_seed(0)
 torch.backends.cudnn.deterministic = True
 torch.backends.cudnn.benchmark = False
 
+def tokenize_function(examples: dict) -> dict:
+    """
+    Tokenizes the input examples using the global tokenizer.
 
-# Tokenize the input
-def tokenize_function(examples):
+    Args:
+        examples (dict): A dictionary containing the input examples with a key "text".
+
+    Returns:
+        dict: A dictionary with tokenized inputs.
+    """
     return tokenizer(examples["text"], padding="max_length", truncation=True)
 
 
 # Core training function
-def do_train(args, model, train_dataloader, save_dir="./out"):
+def do_train(args: argparse.Namespace, model: AutoModelForSequenceClassification, train_dataloader: DataLoader, save_dir: str = "./out") -> None:
+    """
+    Trains the given model using the provided training data loader and saves the trained model.
 
-    
+    Args:
+        args (argparse.Namespace): A namespace object containing training parameters such as learning rate and number of epochs.
+        model (AutoModelForSequenceClassification): The model to be trained.
+        train_dataloader (DataLoader): DataLoader object for the training dataset.
+        save_dir (str, optional): Directory where the trained model will be saved. Defaults to "./out".
+
+    Returns:
+        None
+    """
     optimizer = AdamW(model.parameters(), lr=args.learning_rate)
     num_epochs = args.num_epochs
     num_training_steps = num_epochs * len(train_dataloader)
@@ -53,8 +71,8 @@ def do_train(args, model, train_dataloader, save_dir="./out"):
     model.train()
     progress_bar = tqdm(range(num_training_steps))
 
-    # Training loop --- optimizer and lr_sceduler (learning rate scheduler)
-    for epoch in range(num_epochs):
+    # Training loop --- optimizer and lr_scheduler (learning rate scheduler)
+    for _ in range(num_epochs):
         for batch in train_dataloader:
             batch = {k: v.to(device) for k, v in batch.items()}
             outputs = model(**batch)
@@ -63,9 +81,9 @@ def do_train(args, model, train_dataloader, save_dir="./out"):
 
             optimizer.step()
             lr_scheduler.step()
-            optimizer.zero_grad() # zero gradients
-            progress_bar.update(1)   
-    
+            optimizer.zero_grad()  # zero gradients
+            progress_bar.update(1)
+
     print("Training completed...")
     print("Saving Model....")
     model.save_pretrained(save_dir)
@@ -74,8 +92,18 @@ def do_train(args, model, train_dataloader, save_dir="./out"):
     
     
 # Core evaluation function
-def do_eval(eval_dataloader, output_dir, out_file):
-    
+def do_eval(eval_dataloader: DataLoader, output_dir: str, out_file: TextIO) -> dict:
+    """
+    Evaluates the model on the given evaluation data loader and writes predictions and references to the output file.
+
+    Args:
+        eval_dataloader (DataLoader): DataLoader object for the evaluation dataset.
+        output_dir (str): Directory where the trained model is saved.
+        out_file: File object to write the predictions and references.
+
+    Returns:
+        dict: A dictionary containing the evaluation metric score.
+    """
     model = AutoModelForSequenceClassification.from_pretrained(output_dir)
     model.to(device)
     model.eval()
@@ -94,17 +122,23 @@ def do_eval(eval_dataloader, output_dir, out_file):
         # write to output file
         for i in range(predictions.shape[0]):
             out_file.write(str(predictions[i].item()) + "\n")
-            #out_file.write("\n")
             out_file.write(str(batch["labels"][i].item()) + "\n\n")
-            #out_file.write("\n\n")
 
     score = metric.compute()
     
     return score
 
 # Created a dataladoer for the augmented training dataset
-def create_augmented_dataloader(dataset):
+def create_augmented_dataloader(dataset: datasets.DatasetDict) -> DataLoader:
+    """
+    Creates a DataLoader for the augmented training dataset by adding 5000 randomly transformed examples to the original training dataset.
 
+    Args:
+        dataset (datasets.DatasetDict): The original dataset containing the training and test splits.
+
+    Returns:
+        DataLoader: A DataLoader object for the augmented training dataset.
+    """
     # 5000 randomly transformed examples
     train_augmented_size = 5000
     train_transformed_sample = dataset["train"].shuffle(seed=42).select(range(train_augmented_size))
@@ -114,8 +148,6 @@ def create_augmented_dataloader(dataset):
     # Final dataset train size: "25,000" + "5,000" = "30,000" 
     train_transformed_dataset = concatenate_datasets([dataset["train"], train_transformed_sample])                                                
     
-    train_dataloader = None
-
     tokenized_dataset = train_transformed_dataset.map(tokenize_function, batched=True)
 
     # Prepare dataset for use by model
@@ -129,8 +161,17 @@ def create_augmented_dataloader(dataset):
     return train_dataloader
 
 # Create a dataloader for the transformed test set
-def create_transformed_dataloader(dataset, debug_transformation):
-    
+def create_transformed_dataloader(dataset: datasets.DatasetDict, debug_transformation: bool) -> DataLoader:
+    """
+    Creates a DataLoader for the transformed test dataset. Optionally prints a few transformed examples for debugging.
+
+    Args:
+        dataset (datasets.DatasetDict): The original dataset containing the training and test splits.
+        debug_transformation (bool): If True, prints 5 random transformed examples for debugging and exits.
+
+    Returns:
+        DataLoader: A DataLoader object for the transformed test dataset.
+    """
     # Print 5 random transformed examples
     if debug_transformation:
         small_dataset = dataset["test"].shuffle(seed=42).select(range(5))
@@ -144,17 +185,16 @@ def create_transformed_dataloader(dataset, debug_transformation):
             print('='*30)
 
         exit()
-      
-    
-    transformed_dataset = dataset["test"].map(custom_transform, load_from_cache_file=False)                                                    
+
+    transformed_dataset = dataset["test"].map(custom_transform, load_from_cache_file=False)
     transformed_tokenized_dataset = transformed_dataset.map(tokenize_function, batched=True, load_from_cache_file=False)
     transformed_tokenized_dataset = transformed_tokenized_dataset.remove_columns(["text"])
     transformed_tokenized_dataset = transformed_tokenized_dataset.rename_column("label", "labels")
     transformed_tokenized_dataset.set_format("torch")
 
-    transformed_val_dataset = transformed_tokenized_dataset    
+    transformed_val_dataset = transformed_tokenized_dataset
     eval_dataloader = DataLoader(transformed_val_dataset, batch_size=8)
-    
+
     return eval_dataloader
 
 
@@ -255,4 +295,3 @@ if __name__ == "__main__":
         print("Score: ", score)
         
         out_file.close()
-
