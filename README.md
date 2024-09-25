@@ -40,7 +40,7 @@ pip install -r requirements.txt
 - `main_GPT.ipynb`: Jupyter Notebook for running GPT-3.5 evalaluations of Original (Sample) and Transformed (Sample) datasets as well as BERT and DistilBERt
 
 **Predicton files**
-Files within `./pred` folder
+Files within `./CARC_output` folder
 
 BERT:
 - `out_original.txt`: Fine-tuned BERT on original dataset
