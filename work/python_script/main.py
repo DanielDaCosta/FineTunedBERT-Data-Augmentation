@@ -50,7 +50,7 @@ def do_train(args, model, train_dataloader, save_dir="./out"):
     model.train()
     progress_bar = tqdm(range(num_training_steps))
 
-    # Training loop --- make sure to use the optimizer and lr_sceduler (learning rate scheduler)
+    # Training loop --- optimizer and lr_sceduler (learning rate scheduler)
     for epoch in range(num_epochs):
         for batch in train_dataloader:
             batch = {k: v.to(device) for k, v in batch.items()}
