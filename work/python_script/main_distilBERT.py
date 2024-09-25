@@ -57,10 +57,6 @@ def do_train(args, model, train_dataloader, save_dir="./out_distilbert"):
     model.train()
     progress_bar = tqdm(range(num_training_steps))
 
-    # Implement the training loop --- make sure to use the optimizer and lr_sceduler (learning rate scheduler)
-    # Remember that pytorch uses gradient accumumlation so you need to use zero_grad (https://pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html)
-    # You can use progress_bar.update(1) to see the progress during training
-    # You can refer to the pytorch tutorial covered in class for reference
     for epoch in range(num_epochs):
         for batch in train_dataloader:
             batch = {k: v.to(device) for k, v in batch.items()}
@@ -111,14 +107,6 @@ def do_eval(eval_dataloader, output_dir, out_file):
 
 # Created a dataladoer for the augmented training dataset
 def create_augmented_dataloader(dataset):
-    
-    ################################
-    ##### YOUR CODE BEGINGS HERE ###
-    
-    # Here, 'dataset' is the original dataset. You should return a dataloader called 'train_dataloader' (with batch size = 8) -- this
-    # dataloader will be for the original training split augmented with 5k random transformed examples from the training set.
-    # You may want to set load_from_cache_file to False when using dataset maps
-    # You may find it helpful to see how the dataloader was created at other place in this code.
 
     # 5000 randomly transformed examples
     train_augmented_size = 5000
