@@ -332,13 +332,6 @@ def replace_with_synonym_word2vec(text: str, pct_synonyms: float = 0.4, word2vec
 
 def custom_transform(example):
     
-    ################################
-    ##### YOUR CODE BEGINGS HERE ###
-    
-    # Design and implement the transformation as mentioned in pdf
-    # You are free to implement any transformation but the comments at the top roughly describe
-    # how you could implement two of them --- synonym replacement and typos.
-    
     # You should update example["text"] using your transformation
     
     # Select transformation
@@ -359,8 +352,6 @@ def custom_transform(example):
     # Apply contractions to all of them
     text = expand_contradictions(text)
     example["text"] = text
-    ##### YOUR CODE ENDS HERE ######
-
     
     return example
 
