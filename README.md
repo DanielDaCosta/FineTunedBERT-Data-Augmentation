@@ -114,9 +114,8 @@ python3 main.py --eval_augmented --model_dir ./out
 python3 main.py --eval_augmented --model_dir ./out_augmented
 ```
 
-
 ```python
-# Evaluation original DistilBERT model on transformed data
+# Evaluation of the original DistilBERT model on transformed data
 python3 main_distilBERT.py --eval_augmented --model_dir ./out_distilbert
 
 # Evaluation augmented DistilBERT model on original data
