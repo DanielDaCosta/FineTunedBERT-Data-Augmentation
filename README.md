@@ -105,7 +105,6 @@ Outputs:
 - out_distilbert_augmented_original.txt: predictions
 
 ## Evaluations
-
 ```python
 # Evaluation original BERT model on transformed data
 python3 main.py --eval_augmented --model_dir ./out
